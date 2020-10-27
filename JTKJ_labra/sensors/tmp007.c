@@ -25,19 +25,18 @@ double tmp007_get_data(I2C_Handle *i2c) {
 
 	/*
 	// Viestipuskurit, esittele oikea koko (korvaa nn)
-	uint8_t txBuffer[1];
-    uint8_t rxBuffer[2];
+	uint8_t txBuffer[ nn ];
+    uint8_t rxBuffer[ nn ];
 	// Laitteen i2c-osoite
-    i2cTransaction.slaveAddress = Board_TMP007_ADDR;
+    i2cTransaction.slaveAddress = nn;
 	// Laitteen rekisterin osoite
-    txBuffer[0] = TMP007_REG_TEMP;
+    txBuffer[0] = nn;
 	// korvaa nn
-    i2cTransaction.writeBuf = txBuffer;
-    i2cTransaction.writeCount = 1;
-    i2cTransaction.readBuf = rxBuffer;
-    i2cTransaction.readCount = 2;
+    i2cTransaction.writeBuf = nn;
+    i2cTransaction.writeCount = nn;
+    i2cTransaction.readBuf = nn;
+    i2cTransaction.readCount = nn;
     */
-
 
 	if (I2C_transfer(*i2c, &i2cTransaction)) {
 
@@ -46,8 +45,7 @@ double tmp007_get_data(I2C_Handle *i2c) {
 		//       Exercise 2. Convert the register value to temperature with your exercise code
 		//       and sensor datasheet
 		// temperature = ...
-	    //uint16_t detached = rxBuffer >> 2;
-	    //float temperature = 0.03125 * detached;
+
 	} else {
 
 		System_printf("TMP007: Data read failed!\n");

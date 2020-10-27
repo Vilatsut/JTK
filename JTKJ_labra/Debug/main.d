@@ -4,6 +4,7 @@ main.obj: ../main.c
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdio.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/linkage.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdarg.h
+main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/string.h
 main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/std.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdarg.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
@@ -161,10 +162,13 @@ main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/interfaces/ITaskSupport.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task__epilogue.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/package/Task_SupportProxy.h
-main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/PIN.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/I2C.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdbool.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/i2c/I2CCC26XX.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/pin/PINCC26XX.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/PIN.h
+main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/ioc.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_types.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_chip_def.h
@@ -196,34 +200,51 @@ main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Error.h
 main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi__epilogue.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
-main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/I2C.h
-main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/Power.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/utils/List.h
 main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Swi.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Semaphore.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IInstance.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Diags.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Log.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Assert.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Queue.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IInstance.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event__prologue.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Assert.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Diags.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Log.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Queue.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task.h
+main.obj: C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event__epilogue.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/power/PowerCC26XX.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h
+main.obj: C:/ti/JTKJ_labra_2020/splash_image.h
+main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/grlib/grlib.h
+main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/assert.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/display/Display.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/display/DisplayExt.h
 main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/grlib/grlib.h
-main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/assert.h
-main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/UART.h
-main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
 main.obj: ../Board.h
 main.obj: ../CC2650STK.h
-main.obj: ../wireless/comm_lib.h
-main.obj: C:/Users/jobbr/workspace_v6_2/JTKJ_labra/wireless/CWC_CC2650_154Drv.h
-main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/rf_data_entry.h
-main.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/rf_mailbox.h
-main.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/string.h
-main.obj: C:/Users/jobbr/workspace_v6_2/JTKJ_labra/wireless/address.h
-main.obj: ../sensors/opt3001.h
+main.obj: ../sensors/mpu9250.h
 
 ../main.c: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdio.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/linkage.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdarg.h: 
+C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/string.h: 
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/std.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdarg.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
@@ -381,10 +402,13 @@ C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h:
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/interfaces/ITaskSupport.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task__epilogue.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/package/Task_SupportProxy.h: 
-C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/PIN.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/I2C.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stdbool.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/i2c/I2CCC26XX.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/pin/PINCC26XX.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/PIN.h: 
+C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/ioc.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_types.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_chip_def.h: 
@@ -416,26 +440,42 @@ C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Error.h:
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi__epilogue.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
-C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/I2C.h: 
-C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/Power.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/utils/List.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Swi.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Semaphore.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IInstance.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Diags.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Log.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Assert.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Queue.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Types.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IInstance.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event__prologue.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Assert.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Diags.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/Log.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Queue.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Task.h: 
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/runtime/IModule.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Event__epilogue.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/power/PowerCC26XX.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/family/arm/m3/Hwi.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/Clock.h: 
+C:/ti/JTKJ_labra_2020/splash_image.h: 
+C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/grlib/grlib.h: 
+C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/assert.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/display/Display.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/display/DisplayExt.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/mw/grlib/grlib.h: 
-C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/assert.h: 
-C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/UART.h: 
-C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
 ../Board.h: 
 ../CC2650STK.h: 
-../wireless/comm_lib.h: 
-C:/Users/jobbr/workspace_v6_2/JTKJ_labra/wireless/CWC_CC2650_154Drv.h: 
-C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/rf_data_entry.h: 
-C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/rf_mailbox.h: 
-C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/string.h: 
-C:/Users/jobbr/workspace_v6_2/JTKJ_labra/wireless/address.h: 
-../sensors/opt3001.h: 
+../sensors/mpu9250.h: 

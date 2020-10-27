@@ -187,8 +187,8 @@ CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/pa
 CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/package/Clock_TimerProxy.h
 CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/udma.h
 CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_udma.h
-CC2650STK.obj: C:/Users/jobbr/workspace_v6_2/JTKJ_labra/Board.h
-CC2650STK.obj: C:/Users/jobbr/workspace_v6_2/JTKJ_labra/CC2650STK.h
+CC2650STK.obj: C:/ti/JTKJ_labra_2020/Board.h
+CC2650STK.obj: C:/ti/JTKJ_labra_2020/CC2650STK.h
 CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/UART.h
 CC2650STK.obj: C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h
 CC2650STK.obj: C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/uart/UARTCC26XX.h
@@ -467,8 +467,8 @@ C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbi
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ti/sysbios/knl/package/Clock_TimerProxy.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/driverlib/udma.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202/inc/hw_udma.h: 
-C:/Users/jobbr/workspace_v6_2/JTKJ_labra/Board.h: 
-C:/Users/jobbr/workspace_v6_2/JTKJ_labra/CC2650STK.h: 
+C:/ti/JTKJ_labra_2020/Board.h: 
+C:/ti/JTKJ_labra_2020/CC2650STK.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/UART.h: 
 C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include/stddef.h: 
 C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/tidrivers_cc13xx_cc26xx_2_20_00_08/packages/ti/drivers/uart/UARTCC26XX.h: 

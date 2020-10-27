@@ -16,7 +16,7 @@ BIOS_INC  = -I"C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/pa
 
 TARGET_INC = -I"C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/"
 
-INCS = $(BIOS_INC) $(TARGET_INC)  --include_path="C:/Users/jobbr/workspace_v6_2/JTKJ_labra" --include_path="C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202" --include_path="C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include"  -IC:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ 
+INCS = $(BIOS_INC) $(TARGET_INC)  --include_path="C:/ti/JTKJ_labra_2020" --include_path="C:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/cc26xxware_2_24_02_17202" --include_path="C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include"  -IC:/ti/tirtos_cc13xx_cc26xx_2_20_00_06/products/bios_6_46_00_23/packages/ 
 
 CC = C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armcl -c $(CCOPTS) -I C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include
 ASM = C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/bin/armcl -c $(CCOPTS) -I C:/ti/ccsv6/tools/compiler/arm_15.12.3.LTS/include

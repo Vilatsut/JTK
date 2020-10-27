@@ -1,232 +1,331 @@
-#include <stdio.h>
+/*
+ * main.c
+ *
+ *  Created on: 20.10.2020
+ *  Author: Ville Hokkinen and Juho Bruun
+ *
+ *	Main c file for the course assignment of the course Introduction to computer systems
+ *
+ */
 
-/* XDCtools files */
+// Standard headers
+#include <stdio.h>
+#include <string.h>
+
+// XDCtools Headers
 #include <xdc/std.h>
 #include <xdc/runtime/System.h>
 
-/* BIOS Header files */
+// BIOS Headers
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
+
+// TI headers
+#include <ti/drivers/I2C.h>
+#include <ti/drivers/i2c/I2CCC26XX.h>
 #include <ti/drivers/PIN.h>
 #include <ti/drivers/pin/PINCC26XX.h>
-#include <ti/drivers/I2C.h>
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
+
+// Display headers
+#include <splash_image.h>
 #include <ti/mw/display/Display.h>
 #include <ti/mw/display/DisplayExt.h>
-#include <ti/drivers/UART.h>
 
-/* Board Header files */
+// Board Headers
 #include "Board.h"
+#include "sensors/mpu9250.h"
 
-#include "wireless/comm_lib.h"
-#include "sensors/opt3001.h"
 
-/* Task */
+// Task size in bytes
 #define STACKSIZE 2048
-Char labTaskStack[STACKSIZE];
-// Char commTaskStack[STACKSIZE];
+Char sensorTaskStack[STACKSIZE];
+Char dispTaskStack[STACKSIZE];
 
-// JTKJ: Tehtävä 1. Painonappien alustus ja muuttujat
-// JTKJ: Exercise 1. Pin configuration and variables here
 
-// JTKJ: Tehtävä 1.Painonapin keskeytyksen käsittelijä
-//       Käsittelijässä vilkuta punaista lediä
-// JTKJ: Exercise 1. Pin interrupt handler
-//       Blink the red led of the device
+enum state {IDLE, UP, DOWN, LEFT, RIGHT, VICTORY}; 	// All the states used in our state machine
+enum state myState = IDLE;							// Setting our initialization state to idle
 
-/* Task Functions */
-static PIN_Handle buttonHandle;
-static PIN_State buttonState;
+// GLOBAL TIME VARIABLE
+char time[4];
 
-static PIN_Handle ledHandle;
-static PIN_State ledState;
+// MPU GLOBAL VARIABLES
+static PIN_Handle hMpuPin;
+static PIN_State MpuPinState;
+static PIN_Config MpuPinConfig[] = {
+    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+    PIN_TERMINATE
+};
 
-PIN_Config buttonConfig[] = {
-   Board_BUTTON0  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE, // Neljän vakion TAI-operaatio
-   PIN_TERMINATE };
+/*
+static PIN_Handle powerHandle;
+static PIN_State powerState;
 
-PIN_Config ledConfig[] = {
-   Board_LED1 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+PIN_Config powerConfig[] = {
+   Board_BUTTON1 | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
+   PIN_TERMINATE
+};
+PIN_Config powerWakeConfig[] = {
+   Board_BUTTON1 | PIN_INPUT_EN | PIN_PULLUP | PINCC26XX_WAKEUP_NEGEDGE,
    PIN_TERMINATE
 };
 
-void buttonFxn(PIN_Handle handle, PIN_Id pinId)
-{
-
-      // Vaihdetaan led-pinnin tilaa negaatiolla
-      PIN_setOutputValue( ledHandle, Board_LED1, !PIN_getOutputValue( Board_LED1 ) );
-}
-
-Void labTaskFxn(UArg arg0, UArg arg1) {
-
-    I2C_Handle      i2c;
-    I2C_Params      i2cParams;
-    //I2C_Transaction i2cTransaction;
-    Display_Handle	displayHandle;
-    UART_Handle uart;
-    UART_Params uartParams;
-    Display_Params params;
-    Display_Params_init(&params);
-    params.lineClearMode = DISPLAY_CLEAR_BOTH;
-
-    // JTKJ: Tehtävä 2. Avaa i2c-väylä taskin käyttöön
-    // JTKJ: Exercise 2. Open the i2c bus0
-
-    I2C_Params_init(&i2cParams);
-    i2cParams.bitRate = I2C_400kHz;
-    i2c = I2C_open(Board_I2C_TMP, &i2cParams);
-    if (i2c == NULL) {
-       System_abort("Error Initializing I2C\n");
-    }
-    // JTKJ: Tehtävä 2. Sensorin alustus kirjastofunktiolla ennen datan lukemista
-    // JTKJ: Exercise 2. Setup the sensor here, before its use
-    opt3001_setup(&i2c);
-
-	// JTKJ: Tehtävä 3. Näytön alustus
-    // JTKJ: Exercise 3. Setup the display here
-    displayHandle = Display_open(Display_Type_LCD, &params);
-
-    // JTKJ: Tehtävä 4. UARTin alustus
-    // JTKJ: Exercise 4. Setup UART connection
-    // Alustetaan sarjaliikenne halutusti
-    UART_Params_init(&uartParams);
-    uartParams.writeDataMode = UART_DATA_TEXT;
-    uartParams.readDataMode = UART_DATA_TEXT;
-    uartParams.readEcho = UART_ECHO_OFF;
-    uartParams.readMode=UART_MODE_BLOCKING;
-    uartParams.baudRate = 9600; // nopeus 9600baud
-    uartParams.dataLength = UART_LEN_8; // 8
-    uartParams.parityType = UART_PAR_NONE; // n
-    uartParams.stopBits = UART_STOP_ONE; // 1
-
-    uart = UART_open(Board_UART0, &uartParams);
-       if (uart == NULL) {
-          System_abort("Error opening the UART");
-       }
-
-    while (1) {
-
-        // JTKJ: Tehtävä 2. Lue sensorilta dataa ja tulosta se Debug-ikkunaan
-        // JTKJ: Exercise 2. Read sensor data and print it to the Debug window
-    	float lux = opt3001_get_data(&i2c);
-
-    	char string[16];
-    	// JTKJ: Tehtävä 3. Tulosta sensorin arvo merkkijonoon ja kirjoita se ruudulle
-		// JTKJ: Exercise 3. Store the sensor value as char array and print it to the display
-    	if (displayHandle) {
-    		 sprintf(string,"%f",lux);
-    		 Display_print0(displayHandle, 0, 0, string);
-    	}
-    	char strang[64];
-    	// JTKJ: Tehtävä 4. Lähetä CSV-muotoinen merkkijono UARTilla
-		// JTKJ: Exercise 4. Send CSV string with UART
-    	sprintf(strang, "id:%x,light=%.02f\r\n",Board_OPT3001_ADDR ,lux);
-    	UART_write(uart, strang, strlen(strang));
-    	// Once per second
-    	Task_sleep(1000000 / Clock_tickPeriod);
-    	Display_clear(displayHandle);
-
-    }
-}
-
-/* Communication Task */
-/*
-Void commTaskFxn(UArg arg0, UArg arg1) {
-
-    // Radio to receive mode
-	int32_t result = StartReceive6LoWPAN();
-	if(result != true) {
-		System_abort("Wireless receive mode failed");
-	}
-
-    while (1) {
-
-        // If true, we have a message
-    	if (GetRXFlag() == true) {
-
-    		// Handle the received message..
-        }
-
-    	// Absolutely NO Task_sleep in this task!!
-    }
-}
+PIN_Config buttonConfig[] = {
+   Board_BUTTON1  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
+   PIN_TERMINATE
+};
 */
 
-Int main(void) {
 
-    // Task variables
-	Task_Handle labTask;
-	Task_Params labTaskParams;
-	/*
-	Task_Handle commTask;
-	Task_Params commTaskParams;
-	*/
+// MPUs own I2C interface
+static const I2CCC26XX_I2CPinCfg i2cMPUCfg = {
+    .pinSDA = Board_I2C0_SDA1,
+    .pinSCL = Board_I2C0_SCL1
+};
 
-    // Initialize board
+Void moveTask() {
+
+}
+
+// SENSOR TASK
+Void sensorFxn(UArg arg0, UArg arg1) {
+
+	float ax, ay, az, gx, gy, gz;
+
+    // MPU 9250 PARAMETERS
+	I2C_Handle i2cMPU; // MPU9250 sensor interface
+	I2C_Params i2cMPUParams;
+    I2C_Params_init(&i2cMPUParams);
+    i2cMPUParams.bitRate = I2C_400kHz;
+    i2cMPUParams.custom = (uintptr_t)&i2cMPUCfg;
+
+    // MPU OPEN I2C
+    i2cMPU = I2C_open(Board_I2C, &i2cMPUParams);
+    if (i2cMPU == NULL) {
+        System_abort("Error Initializing I2CMPU\n");
+    }
+
+    // MPU POWER ON
+    PIN_setOutputValue(hMpuPin,Board_MPU_POWER, Board_MPU_POWER_ON);
+
+    // WAIT 100MS FOR THE SENSOR TO POWER UP
+	Task_sleep(100000 / Clock_tickPeriod);
+    System_printf("MPU9250: Power ON\n");
+    System_flush();
+
+    // MPU9250 SETUP
+	System_printf("MPU9250: Setup and calibration...\n");
+	System_flush();
+	mpu9250_setup(&i2cMPU);
+	System_printf("MPU9250: Setup and calibration OK\n");
+	System_flush();
+
+    // MPU CLOSE I2C
+    I2C_close(i2cMPU);
+
+	while (1) {
+
+		if(myState == IDLE){
+
+			// MPU OPEN I2C
+			i2cMPU = I2C_open(Board_I2C, &i2cMPUParams);
+			if (i2cMPU == NULL) {
+				System_abort("Error Initializing I2CMPU\n");
+			}
+
+			// MPU ASK DATA
+			mpu9250_get_data(&i2cMPU, &ax, &ay, &az, &gx, &gy, &gz);
+
+		    // MPU CLOSE I2C
+			I2C_close(i2cMPU);
+
+
+			if(gx > 60) {
+				myState = UP;
+				Task_sleep(1500000 / Clock_tickPeriod);
+			}
+			else if(gx < -60) {
+				myState = DOWN;
+				Task_sleep(1500000 / Clock_tickPeriod);
+			}
+			else if(gy > 60) {
+				myState = RIGHT;
+				Task_sleep(1500000 / Clock_tickPeriod);
+			}
+			else if(gy < -60) {
+				myState = LEFT;
+				Task_sleep(1500000 / Clock_tickPeriod);
+			}
+			else {
+				Task_sleep(100000 / Clock_tickPeriod);
+			}
+		}
+
+		else {
+	    	Task_sleep(100000 / Clock_tickPeriod);
+	    }
+    }
+
+	// MPU9250 POWER OFF
+	// Because of loop forever, code never goes here
+    PIN_setOutputValue(hMpuPin,Board_MPU_POWER, Board_MPU_POWER_OFF);
+}
+
+
+Void displayTask(UArg arg0, UArg arg1) {
+
+	// DISPLAY PARAMETERS
+	Display_Params params;
+	Display_Params_init(&params);
+	params.lineClearMode = DISPLAY_CLEAR_BOTH;
+	Display_Handle displayHandle = Display_open(Display_Type_LCD, &params);
+
+    if (displayHandle) {
+
+      tContext *pContext = DisplayExt_getGrlibContext(displayHandle);
+
+		if (pContext){
+			  while (1){
+				  if (myState == UP){
+					  GrImageDraw(pContext, &upImage, 0, 5);
+					  GrFlush(pContext);
+					  Task_sleep(1500000 / Clock_tickPeriod);
+					  myState = IDLE;
+					  GrClearDisplay(pContext);
+				  }
+				  else if (myState == DOWN){
+					  GrImageDraw(pContext, &downImage, 0, 0);
+					  GrFlush(pContext);
+					  Task_sleep(1500000 / Clock_tickPeriod);
+					  myState = IDLE;
+					  GrClearDisplay(pContext);
+				  }
+				  else if (myState == LEFT){
+					  GrImageDraw(pContext, &leftImage, 0, 0);
+					  GrFlush(pContext);
+					  Task_sleep(1500000 / Clock_tickPeriod);
+					  myState = IDLE;
+					  GrClearDisplay(pContext);
+				  }
+				  else if (myState == RIGHT){
+					  GrImageDraw(pContext, &rightImage, 0, 0);
+					  GrFlush(pContext);
+					  Task_sleep(1500000 / Clock_tickPeriod);
+					  myState = IDLE;
+					  GrClearDisplay(pContext);
+				  }
+				  else if (myState == VICTORY){
+					  int i;
+					  for(i = 96; i > 16; i--){
+						  GrImageDraw(pContext, &otitImage, 0, i);
+						  GrFlush(pContext);
+						  Task_sleep(25000 / Clock_tickPeriod);
+					  }
+					  for(i = 16; i > 4; i--){
+						  GrClearDisplay(pContext);
+						  GrImageDraw(pContext, &otitImage, 0, i);
+						  GrFlush(pContext);
+						  Task_sleep(25000 / Clock_tickPeriod);
+					  }
+					  Display_print0(displayHandle, 11, 1, "Victory Royale");
+					  GrFlush(pContext);
+					  Task_sleep(1000000 / Clock_tickPeriod);
+				  }
+				  else {
+					  Task_sleep(100000 / Clock_tickPeriod);
+				  }
+			 }
+		}
+	}
+}
+
+/*
+// KÃ¤sittelijÃ¤funktio
+Void powerFxn(PIN_Handle handle, PIN_Id pinId) {
+	//NÃ¤yttÃ¶ pÃ¤Ã¤lle
+	Display_Params params;
+	Display_Params_init(&params);
+	params.lineClearMode = DISPLAY_CLEAR_BOTH;
+	Display_Handle displayHandle = Display_open(Display_Type_LCD, &params);
+   // NÃ¤yttÃ¶ pois pÃ¤Ã¤ltÃ¤
+    Display_clear(displayHandle);
+    Display_close(displayHandle);
+    Task_sleep(100000 / Clock_tickPeriod);
+
+   // Taikamenot
+    PIN_close(powerHandle);
+    PINCC26XX_setWakeup(powerWakeConfig);
+    Power_shutdown(NULL,0);
+}
+*/
+/*
+Void clkFxn(UArg arg0) {
+
+	// HANDLER FOR THE TIMER FUNCTION
+	sprintf(time,"%04.0f", (double)Clock_getTicks() / 100000.0);
+    Task_sleep(100000 / Clock_tickPeriod);
+}
+*/
+int main(void) {
+
+	Task_Handle sensorTask, dispTask;
+	Task_Params sensorTaskParams, dispTaskParams;
+
     Board_initGeneral();
-
-    // JTKJ: Tehtävä 2. i2c-cäylä käyttöön ohjelmassa
-    // JTKJ: Exercise 2. Use i2c bus in program
-
     Board_initI2C();
 
-    // JTKJ: Tehtävä 4. UART käyttöön ohjelmassa
-    // JTKJ: Exercise 4. Use UART in program
-    Board_initUART();
+    // OPEN MPU POWER PIN
+    hMpuPin = PIN_open(&MpuPinState, MpuPinConfig);
+    if (hMpuPin == NULL) {
+    	System_abort("Pin open failed!");
+    }
 
-    // JTKJ: Tehtävä 1. Painonappi- ja ledipinnit käyttöön tässä
-	// JTKJ: Exercise 1. Open and configure the button and led pins here
+    Task_Params_init(&sensorTaskParams);
+    sensorTaskParams.stackSize = STACKSIZE;
+    sensorTaskParams.stack = &sensorTaskStack;
+    sensorTask = Task_create((Task_FuncPtr)sensorFxn, &sensorTaskParams, NULL);
+    if (sensorTask == NULL) {
+    	System_abort("Task create failed!");
+    }
 
-    // JTKJ: Tehtävä 1. Rekisteröi painonapille keskeytyksen käsittelijäfunktio
-	// JTKJ: Exercise 1. Register the interrupt handler for the button
-	buttonHandle = PIN_open(&buttonState, buttonConfig);
-	if(!buttonHandle) {
-		System_abort("Error initializing button pins\n");
-	   }
-    ledHandle = PIN_open(&ledState, ledConfig);
-    if(!ledHandle) {
-	   System_abort("Error initializing LED pins\n");
+    Task_Params_init(&dispTaskParams);
+    dispTaskParams.stackSize = STACKSIZE;
+    dispTaskParams.stack = &dispTaskStack;
+    dispTask = Task_create(displayTask, &dispTaskParams, NULL);
+    if (dispTask == NULL) {
+        System_abort("Task create failed!");
+    }
+/*
+    powerHandle = PIN_open(&powerState, powerConfig);
+       if(!powerHandle) {
+          System_abort("Error initializing power button\n");
        }
+       if (PIN_registerIntCb(powerHandle, &powerFxn) != 0) {
+          System_abort("Error registering power button callback");
+       }
+*/
+/*
+    // RTOS' clock variables
+    Clock_Handle clkHandle;
+    Clock_Params clkParams;
 
-    /* Task */
-    Task_Params_init(&labTaskParams);
-    labTaskParams.stackSize = STACKSIZE;
-    labTaskParams.stack = &labTaskStack;
-    labTaskParams.priority=2;
+    // Clock initialization
+    Clock_Params_init(&clkParams);
+    clkParams.period = 1000000 / Clock_tickPeriod;
+    clkParams.startFlag = TRUE;
 
-    labTask = Task_create(labTaskFxn, &labTaskParams, NULL);
-    if (labTask == NULL) {
-    	System_abort("Task create failed!");
-    }
-
-    if (PIN_registerIntCb(buttonHandle, &buttonFxn) != 0) {
-	   System_abort("Error registering button callback function");
-    }
-
-    /* Communication Task */
-	/*
-    Init6LoWPAN(); // This function call before use!
-
-    Task_Params_init(&commTaskParams);
-    commTaskParams.stackSize = STACKSIZE;
-    commTaskParams.stack = &commTaskStack;
-    commTaskParams.priority=1;
-
-    commTask = Task_create(commTaskFxn, &commTaskParams, NULL);
-    if (commTask == NULL) {
-    	System_abort("Task create failed!");
-    }
-	*/
-
-    /* Sanity check */
+    // Introducing the clock in the program
+    clkHandle = Clock_create((Clock_FuncPtr)clkFxn, 1000000 / Clock_tickPeriod, &clkParams, NULL);
+       if (clkHandle == NULL) {
+          System_abort("Clock create failed");
+       }
+*/
+    // Start BIOS
     System_printf("Hello world!\n");
     System_flush();
-    
-    /* Start BIOS */
     BIOS_start();
 
     return (0);
 }
-

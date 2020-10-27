@@ -72,7 +72,7 @@ double opt3001_get_data(I2C_Handle *i2c) {
 
 	if (opt3001_get_status(i2c) & OPT3001_DATA_READY) {
 
-		// JTKJ: Tehtävä 2. Kommentit pois ja täytetään i2c-viestirakenne luentomateriaalin avulla..
+		// JTKJ: Tehtï¿½vï¿½ 2. Kommentit pois ja tï¿½ytetï¿½ï¿½n i2c-viestirakenne luentomateriaalin avulla..
 		// JTKJ: Exercise 2. Uncomment and fill in the data structure below with correct values..
 
 		// Viestipuskurit, esittele oikea koko (korvaa nn)
@@ -110,7 +110,7 @@ double opt3001_get_data(I2C_Handle *i2c) {
 	        System_printf(merkkijono);
 	        System_flush();
 			// JTKJ: 2. Laske mittausarvo luxeina luentomateriaalin (datakirjan)
-			//          harjoitustehtäväsi kaavalla
+			//          harjoitustehtï¿½vï¿½si kaavalla
 			//          By using the equation in datasheet or your exercise
 			//          find the value in lux
             // lux = ...

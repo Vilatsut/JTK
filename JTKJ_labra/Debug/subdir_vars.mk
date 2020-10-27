@@ -12,17 +12,20 @@ CFG_SRCS += \
 C_SRCS += \
 ../CC2650STK.c \
 ../ccfg.c \
-../main.c 
+../main.c \
+../splash_image.c 
 
 OBJS += \
 ./CC2650STK.obj \
 ./ccfg.obj \
-./main.obj 
+./main.obj \
+./splash_image.obj 
 
 C_DEPS += \
 ./CC2650STK.d \
 ./ccfg.d \
-./main.d 
+./main.d \
+./splash_image.d 
 
 GEN_MISC_DIRS += \
 ./configPkg/ 
@@ -47,16 +50,19 @@ GEN_MISC_DIRS__QUOTED += \
 C_DEPS__QUOTED += \
 "CC2650STK.d" \
 "ccfg.d" \
-"main.d" 
+"main.d" \
+"splash_image.d" 
 
 OBJS__QUOTED += \
 "CC2650STK.obj" \
 "ccfg.obj" \
-"main.obj" 
+"main.obj" \
+"splash_image.obj" 
 
 C_SRCS__QUOTED += \
 "../CC2650STK.c" \
 "../ccfg.c" \
-"../main.c" 
+"../main.c" \
+"../splash_image.c" 
 
 

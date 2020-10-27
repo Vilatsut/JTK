@@ -145,8 +145,8 @@ void bmp280_setup(I2C_Handle *i2c) {
 
 void bmp280_get_data(I2C_Handle *i2c, double *pres, double *temp) {
 
-	//uint32_t raw_t = 0;
-	//uint32_t raw_p = 0;
+	uint32_t raw_t = 0;
+	uint32_t raw_p = 0;
 	I2C_Transaction i2cTransaction;
 
 	// JTKJ: Kommentit pois ja t‰ytet‰‰n i2c-viestirakenne luentomateriaalin avulla..
@@ -168,7 +168,7 @@ void bmp280_get_data(I2C_Handle *i2c, double *pres, double *temp) {
 
     if (I2C_transfer(*i2c, &i2cTransaction)) {
 
-		//uint32_t pressure=0, temperature=0;
+		uint32_t pressure=0, temperature=0;
     	// JTKJ: 1. Muunna mittausarvot 20-bittisiksi kokonaisluvuiksi viestipuskurista
 		//          (rxBuffer). K‰yt‰ t‰ss‰ harjoitusteht‰v‰koodiasi ja apumuuttujia
 		//          pressure ja temperature.
