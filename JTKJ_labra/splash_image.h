@@ -15,5 +15,6 @@ extern const tImage upImage;
 extern const tImage downImage;
 extern const tImage leftImage;
 extern const tImage rightImage;
+extern const tImage blankImage;
 
 #endif /* SPLASH_IMAGE_H_ */
