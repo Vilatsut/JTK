@@ -2,7 +2,7 @@
  * splash_image.h
  *
  *  Created on: 19 Oct 2020
- *      Author: jobbr
+ *  Author: Juho Bruun & Ville Hokkinen
  */
 
 #ifndef SPLASH_IMAGE_H_

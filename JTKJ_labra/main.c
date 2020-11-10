@@ -38,6 +38,7 @@
 #include "Board.h"
 #include "sensors/mpu9250.h"
 #include "buzzer.h"
+#include "wireless/comm_lib.h"
 
 
 // Task size in bytes
@@ -45,10 +46,13 @@
 Char sensorTaskStack[STACKSIZE];
 Char dispTaskStack[STACKSIZE];
 Char musicTaskStack[STACKSIZE];
+Char commTaskStack[STACKSIZE];
 
+enum state {UP = 0, DOWN, LEFT, RIGHT, READ, VICTORY, START, LOSER};	// All the states used in our state machine
+enum state myState = START;									// Setting our initialization state to start
 
-enum state {IDLE, UP, DOWN, LEFT, RIGHT, VICTORY, START}; 	// All the states used in our state machine
-enum state myState = START;							// Setting our initialization state to idle
+// GLOBAL EVENT VARIABLE
+char event[20];
 
 // GLOBAL TIME VARIABLE
 char time[20];
@@ -97,9 +101,48 @@ static const I2CCC26XX_I2CPinCfg i2cMPUCfg = {
     .pinSCL = Board_I2C0_SCL1
 };
 
-Void moveTask() {
+// COMMUNICATION TASK
+Void communicateTask(UArg arg0, UArg arg1) {
+	char msgBuffer[16];
+	uint16_t senderAddr;
+	char deviceId[4];
+	char condition[10];
 
+	char moves[4][10] = {
+		"UP", "DOWN", "LEFT", "RIGHT"
+	};
+
+	int32_t result = StartReceive6LoWPAN();
+	if (result != true) {
+		System_abort("Wireless receive start failed");
+	}
+
+	while(1) {
+		if ((myState == UP) || (myState == DOWN) || (myState == LEFT) || (myState == RIGHT)) {
+			sprintf(msgBuffer, "event:%s", moves[myState]);
+			Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
+			StartReceive6LoWPAN();
+			Task_sleep(1500000 / Clock_tickPeriod);
+		}
+		if (GetRXFlag()) {
+		    memset(msgBuffer,0,16);
+		    Receive6LoWPAN(&senderAddr, msgBuffer, 16);
+/*		    deviceId = strtok(msgBuffer, ",");
+		    condition = strtok(NULL, ",");
+		    if (deviceId == "170") {
+		    	if (condition == "WIN") {
+		    		myState = VICTORY;
+		    	}
+		    	else if (condition == "LOST GAME") {
+		    		myState = LOSER;
+		    	}
+		    }
+*/
+		}
+		Task_sleep(100000 / Clock_tickPeriod);
+	}
 }
+
 
 // SENSOR TASK
 Void sensorFxn(UArg arg0, UArg arg1) {
@@ -139,7 +182,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 
 	while (1) {
 
-		if(myState == IDLE){
+		if(myState == READ){
 
 			// MPU OPEN I2C
 			i2cMPU = I2C_open(Board_I2C, &i2cMPUParams);
@@ -155,6 +198,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 
 
 			if(gx > 60) {
+				//event = "UP";
 				myState = UP;
 				Task_sleep(1500000 / Clock_tickPeriod);
 			}
@@ -271,7 +315,7 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  GrFlush(pContext);
 					  Display_print0(displayHandle, 0, 9, "Start ^");
 				  }
-				  else if (myState == IDLE) {
+				  else if (myState == READ) {
 					  GrImageDraw(pContext, &blankImage, 0, 0);
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 				  }
@@ -281,7 +325,7 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
 					  if (myState != START) {
-						  myState = IDLE;
+						  myState = READ;
 					  }
 				  }
 				  else if (myState == DOWN){
@@ -290,7 +334,7 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
 					  if (myState != START) {
-						  myState = IDLE;
+						  myState = READ;
 					  }
 				  }
 				  else if (myState == LEFT){
@@ -299,7 +343,7 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
 					  if (myState != START) {
-						  myState = IDLE;
+						  myState = READ;
 					  }
 				  }
 				  else if (myState == RIGHT){
@@ -308,27 +352,34 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
 					  if (myState != START) {
-						  myState = IDLE;
+						  myState = READ;
 					  }
 				  }
 				  else if (myState == VICTORY){
 					  int i;
-					  for(i = 96; i > 16; i--){
+					  for(i = 96; i > 9; i--){
 						  GrImageDraw(pContext, &otitImage, 0, i);
+						  Display_print0(displayHandle, 11, 1, "Victory Royale");
 						  GrFlush(pContext);
-						  Task_sleep(25000 / Clock_tickPeriod);
+						  Task_sleep(20000 / Clock_tickPeriod);
 					  }
-					  for(i = 16; i > 4; i--){
-						  GrClearDisplay(pContext);
-						  GrImageDraw(pContext, &otitImage, 0, i);
-						  GrFlush(pContext);
-						  Task_sleep(25000 / Clock_tickPeriod);
-					  }
-					  Display_print0(displayHandle, 11, 1, "Victory Royale");
+					  char screenTime[20];
+					  sprintf(screenTime, "time: %s", time);
+					  Display_print0(displayHandle, 10, 3, screenTime);
+					  Task_sleep(3000000 / Clock_tickPeriod);
+					  GrImageDraw(pContext, &blankImage, 0, 0);
 					  GrFlush(pContext);
-					  Task_sleep(1000000 / Clock_tickPeriod);
+					  myState = START;
 				  }
-
+				  else if (myState == LOSER){
+					  int n;
+					  for(n = 11; n >= 0; n--){
+						  Display_print0(displayHandle, n, 0, "LOSERLOSERLOSER!");
+						  Task_sleep(100000 / Clock_tickPeriod);
+					  }
+					  Task_sleep(1000000 / Clock_tickPeriod);
+					  myState == START;
+				  }
 				  else {
 					  Task_sleep(100000 / Clock_tickPeriod);
 				  }
@@ -360,7 +411,7 @@ Void powerFxn(PIN_Handle handle, PIN_Id pinId) {
 // MENU BUTTON TASK
 Void buttonFxn(PIN_Handle handle, PIN_Id pinId) {
 	if (myState == START) {
-		myState = IDLE;
+		myState = READ;
 	}
 	else {
 		myState = START;
@@ -376,11 +427,13 @@ Void clkFxn(UArg arg0) {
 
 int main(void) {
 
-	Task_Handle sensorTask, dispTask, musicTask;
-	Task_Params sensorTaskParams, dispTaskParams, musicTaskParams;
+	Task_Handle sensorTask, dispTask, musicTask, commTask;
+	Task_Params sensorTaskParams, dispTaskParams, musicTaskParams, commTaskParams;
 
     Board_initGeneral();
     Board_initI2C();
+
+    Init6LoWPAN();
 
     // OPEN BUZZER PIN
     buzzer = PIN_open(&buzzerState, buzzerConfig);
@@ -410,7 +463,7 @@ int main(void) {
     sensorTaskParams.stack = &sensorTaskStack;
     sensorTask = Task_create((Task_FuncPtr)sensorFxn, &sensorTaskParams, NULL);
     if (sensorTask == NULL) {
-    	System_abort("Task create failed!");
+    	System_abort("sensorTask create failed!");
     }
 
     // DISPLAY TASK
@@ -419,7 +472,7 @@ int main(void) {
     dispTaskParams.stack = &dispTaskStack;
     dispTask = Task_create(displayTask, &dispTaskParams, NULL);
     if (dispTask == NULL) {
-        System_abort("Task create failed!");
+        System_abort("dispTask create failed!");
     }
 
     // MUSIC TASK
@@ -428,7 +481,16 @@ int main(void) {
 	musicTaskParams.stack = &musicTaskStack;
 	musicTask = Task_create(musicalTask, &musicTaskParams, NULL);
 	if (musicTask == NULL) {
-		System_abort("Task create failed!");
+		System_abort("musicTask create failed!");
+	}
+
+	//COMMUNICATION TASK
+    Task_Params_init(&commTaskParams);
+	commTaskParams.stackSize = STACKSIZE;
+	commTaskParams.stack = &commTaskStack;
+	commTask = Task_create(communicateTask, &commTaskParams, NULL);
+	if (commTask == NULL) {
+		System_abort("commTask create failed!");
 	}
 
     hButtons = PIN_open(&buttonState, ButtonTableShutdown);
@@ -454,6 +516,7 @@ int main(void) {
        if (clkHandle == NULL) {
           System_abort("Clock create failed");
     }
+
 
     // Start BIOS
     BIOS_start();
