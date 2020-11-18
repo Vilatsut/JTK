@@ -48,8 +48,10 @@ Char dispTaskStack[STACKSIZE];
 Char musicTaskStack[STACKSIZE];
 Char commTaskStack[STACKSIZE];
 
-enum state {UP = 0, DOWN, LEFT, RIGHT, READ, VICTORY, START, LOSER};	// All the states used in our state machine
-enum state myState = START;									// Setting our initialization state to start
+// All the states used in our state machine
+enum state {UP = 0, DOWN, LEFT, RIGHT, READ, VICTORY, START, LOSER, MESSAGE_SENT};
+// Setting our initialization state to start
+enum state myState = START;
 
 // GLOBAL EVENT VARIABLE
 char event[20];
@@ -65,14 +67,15 @@ static PIN_Config MpuPinConfig[] = {
     PIN_TERMINATE
 };
 
+// BUZZER GLOBAL VARIABLES
 static PIN_Handle buzzer;
 static PIN_State buzzerState;
-
 PIN_Config buzzerConfig[] = {
     Board_BUZZER | PIN_GPIO_OUTPUT_EN | PIN_PULLUP,
     PIN_TERMINATE
 };
 
+// TOPBUTTON GLOBAL VARIABLES
 static PIN_Handle topButton;
 static PIN_State topButtonState;
 
@@ -81,7 +84,7 @@ PIN_Config topButtonPress[] = {
    PIN_TERMINATE
 };
 
-
+// POWER BUTTON GLOBAL VARIABLES
 static PIN_Handle hButtons;
 static PIN_State buttonState;
 
@@ -105,12 +108,9 @@ static const I2CCC26XX_I2CPinCfg i2cMPUCfg = {
 Void communicateTask(UArg arg0, UArg arg1) {
 	char msgBuffer[16];
 	uint16_t senderAddr;
-	char deviceId[4];
-	char condition[10];
-
-	char moves[4][10] = {
-		"UP", "DOWN", "LEFT", "RIGHT"
-	};
+	const char delim[2] = ",";
+	char *deviceId;
+	char *condition;
 
 	int32_t result = StartReceive6LoWPAN();
 	if (result != true) {
@@ -118,28 +118,30 @@ Void communicateTask(UArg arg0, UArg arg1) {
 	}
 
 	while(1) {
-		if ((myState == UP) || (myState == DOWN) || (myState == LEFT) || (myState == RIGHT)) {
-			sprintf(msgBuffer, "event:%s", moves[myState]);
-			Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
-			StartReceive6LoWPAN();
-			Task_sleep(1500000 / Clock_tickPeriod);
-		}
+
 		if (GetRXFlag()) {
 		    memset(msgBuffer,0,16);
 		    Receive6LoWPAN(&senderAddr, msgBuffer, 16);
-/*		    deviceId = strtok(msgBuffer, ",");
-		    condition = strtok(NULL, ",");
-		    if (deviceId == "170") {
-		    	if (condition == "WIN") {
+		    deviceId = strtok(msgBuffer, delim);
+		    System_printf("%s\n", deviceId);
+		    System_flush();
+		    condition = strtok(NULL, delim);
+		    System_printf("%s\n", condition);
+		    System_flush();
+		    if (strcmp(deviceId, "170") == 0) {
+		    	System_printf("correct device\n");
+		    	System_flush();
+		    	if (strcmp(condition, "WIN") == 0) {
+		    		System_printf("wonned\n");
+		    		System_flush();
 		    		myState = VICTORY;
 		    	}
-		    	else if (condition == "LOST GAME") {
+		    	else if (strcmp(condition, "LOST GAME") == 0) {
 		    		myState = LOSER;
 		    	}
 		    }
-*/
+
 		}
-		Task_sleep(100000 / Clock_tickPeriod);
 	}
 }
 
@@ -148,6 +150,7 @@ Void communicateTask(UArg arg0, UArg arg1) {
 Void sensorFxn(UArg arg0, UArg arg1) {
 
 	float ax, ay, az, gx, gy, gz;
+	char msgBuffer[16];
 
     // MPU 9250 PARAMETERS
 	I2C_Handle i2cMPU; // MPU9250 sensor interface
@@ -196,26 +199,41 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 		    // MPU CLOSE I2C
 			I2C_close(i2cMPU);
 
+			memset(msgBuffer,0,16);
 
 			if(gx > 60) {
-				//event = "UP";
 				myState = UP;
+				sprintf(msgBuffer, "event:UP");
+				Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
+				StartReceive6LoWPAN();
 				Task_sleep(1500000 / Clock_tickPeriod);
 			}
 			else if(gx < -60) {
 				myState = DOWN;
+				sprintf(msgBuffer, "event:DOWN");
+				Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
+				StartReceive6LoWPAN();
 				Task_sleep(1500000 / Clock_tickPeriod);
 			}
 			else if(gy > 60) {
 				myState = RIGHT;
+				sprintf(msgBuffer, "event:RIGHT");
+				Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
+				StartReceive6LoWPAN();
 				Task_sleep(1500000 / Clock_tickPeriod);
 			}
 			else if(gy < -60) {
 				myState = LEFT;
+				sprintf(msgBuffer, "event:LEFT");
+				Send6LoWPAN(IEEE80154_SERVER_ADDR, msgBuffer, strlen(msgBuffer));
+				StartReceive6LoWPAN();
 				Task_sleep(1500000 / Clock_tickPeriod);
 			}
 			else {
 				Task_sleep(100000 / Clock_tickPeriod);
+			}
+			if ((myState != START) && (myState != VICTORY) && (myState != LOSER)) {
+				myState = READ;
 			}
 		}
 
@@ -232,7 +250,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 Void musicalTask(UArg arg0, UArg arg1) {
 	while(1) {
 		if (myState != START) {
-		    buzzerOpen(buzzer);
+		   /* buzzerOpen(buzzer);
 			buzzerSetFrequency(294); // d
 			Task_sleep(600000 / Clock_tickPeriod);
 			buzzerSetFrequency(350); // f
@@ -287,7 +305,7 @@ Void musicalTask(UArg arg0, UArg arg1) {
 			Task_sleep(100000 / Clock_tickPeriod);
 			buzzerSetFrequency(523);
 			Task_sleep(200000 / Clock_tickPeriod);
-		    buzzerClose();
+		    buzzerClose();*/
 			Task_sleep(2000000 / Clock_tickPeriod);
 		}
 		else {
@@ -324,36 +342,24 @@ Void displayTask(UArg arg0, UArg arg1) {
 					  GrFlush(pContext);
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
-					  if (myState != START) {
-						  myState = READ;
-					  }
 				  }
 				  else if (myState == DOWN){
 					  GrImageDraw(pContext, &downImage, 0, 0);
 					  GrFlush(pContext);
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
-					  if (myState != START) {
-						  myState = READ;
-					  }
 				  }
 				  else if (myState == LEFT){
 					  GrImageDraw(pContext, &leftImage, 0, 0);
 					  GrFlush(pContext);
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
-					  if (myState != START) {
-						  myState = READ;
-					  }
 				  }
 				  else if (myState == RIGHT){
 					  GrImageDraw(pContext, &rightImage, 0, 0);
 					  GrFlush(pContext);
 					  Display_print0(displayHandle, 0, 10, "Stop ^");
 					  Task_sleep(1500000 / Clock_tickPeriod);
-					  if (myState != START) {
-						  myState = READ;
-					  }
 				  }
 				  else if (myState == VICTORY){
 					  int i;
@@ -461,6 +467,7 @@ int main(void) {
     Task_Params_init(&sensorTaskParams);
     sensorTaskParams.stackSize = STACKSIZE;
     sensorTaskParams.stack = &sensorTaskStack;
+	sensorTaskParams.priority = 2;
     sensorTask = Task_create((Task_FuncPtr)sensorFxn, &sensorTaskParams, NULL);
     if (sensorTask == NULL) {
     	System_abort("sensorTask create failed!");
@@ -470,6 +477,7 @@ int main(void) {
     Task_Params_init(&dispTaskParams);
     dispTaskParams.stackSize = STACKSIZE;
     dispTaskParams.stack = &dispTaskStack;
+	dispTaskParams.priority = 2;
     dispTask = Task_create(displayTask, &dispTaskParams, NULL);
     if (dispTask == NULL) {
         System_abort("dispTask create failed!");
@@ -479,6 +487,7 @@ int main(void) {
     Task_Params_init(&musicTaskParams);
 	musicTaskParams.stackSize = STACKSIZE;
 	musicTaskParams.stack = &musicTaskStack;
+	musicTaskParams.priority = 2;
 	musicTask = Task_create(musicalTask, &musicTaskParams, NULL);
 	if (musicTask == NULL) {
 		System_abort("musicTask create failed!");
@@ -488,6 +497,7 @@ int main(void) {
     Task_Params_init(&commTaskParams);
 	commTaskParams.stackSize = STACKSIZE;
 	commTaskParams.stack = &commTaskStack;
+	commTaskParams.priority = 1;
 	commTask = Task_create(communicateTask, &commTaskParams, NULL);
 	if (commTask == NULL) {
 		System_abort("commTask create failed!");
