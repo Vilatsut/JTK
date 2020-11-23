@@ -42,7 +42,7 @@
 
 
 // Task size in bytes
-#define STACKSIZE 1024
+#define STACKSIZE 2048
 Char sensorTaskStack[STACKSIZE];
 Char dispTaskStack[STACKSIZE];
 Char musicTaskStack[STACKSIZE];
@@ -123,17 +123,9 @@ Void communicateTask(UArg arg0, UArg arg1) {
 		    memset(msgBuffer,0,16);
 		    Receive6LoWPAN(&senderAddr, msgBuffer, 16);
 		    deviceId = strtok(msgBuffer, delim);
-		    System_printf("%s\n", deviceId);
-		    System_flush();
 		    condition = strtok(NULL, delim);
-		    System_printf("%s\n", condition);
-		    System_flush();
 		    if (strcmp(deviceId, "170") == 0) {
-		    	System_printf("correct device\n");
-		    	System_flush();
 		    	if (strcmp(condition, "WIN") == 0) {
-		    		System_printf("wonned\n");
-		    		System_flush();
 		    		myState = VICTORY;
 		    	}
 		    	else if (strcmp(condition, "LOST GAME") == 0) {
@@ -250,7 +242,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 Void musicalTask(UArg arg0, UArg arg1) {
 	while(1) {
 		if (myState != START) {
-		   /* buzzerOpen(buzzer);
+		    buzzerOpen(buzzer);
 			buzzerSetFrequency(294); // d
 			Task_sleep(600000 / Clock_tickPeriod);
 			buzzerSetFrequency(350); // f
@@ -297,15 +289,17 @@ Void musicalTask(UArg arg0, UArg arg1) {
 			Task_sleep(200000 / Clock_tickPeriod);
 			buzzerSetFrequency(294);
 			Task_sleep(200000 / Clock_tickPeriod);
-			buzzerSetFrequency(4);
+			buzzerClose();
 			Task_sleep(800000 / Clock_tickPeriod);
+			buzzerOpen(buzzer);
 			buzzerSetFrequency(523);
 			Task_sleep(200000 / Clock_tickPeriod);
-			buzzerSetFrequency(4);
+			buzzerClose();
 			Task_sleep(100000 / Clock_tickPeriod);
+			buzzerOpen(buzzer);
 			buzzerSetFrequency(523);
 			Task_sleep(200000 / Clock_tickPeriod);
-		    buzzerClose();*/
+		    buzzerClose();
 			Task_sleep(2000000 / Clock_tickPeriod);
 		}
 		else {
@@ -384,7 +378,9 @@ Void displayTask(UArg arg0, UArg arg1) {
 						  Task_sleep(100000 / Clock_tickPeriod);
 					  }
 					  Task_sleep(1000000 / Clock_tickPeriod);
-					  myState == START;
+					  GrImageDraw(pContext, &blankImage, 0, 0);
+					  GrFlush(pContext);
+					  myState = START;
 				  }
 				  else {
 					  Task_sleep(100000 / Clock_tickPeriod);
@@ -405,7 +401,7 @@ Void powerFxn(PIN_Handle handle, PIN_Id pinId) {
 	Display_Handle displayHandle = Display_open(Display_Type_LCD, &params);
 
    // Display off
-    Display_clear(displayHandle);
+	Display_clear(displayHandle);
     Display_close(displayHandle);
     Task_sleep(100000 / Clock_tickPeriod);
 
@@ -429,6 +425,7 @@ Void clkFxn(UArg arg0) {
 
 	sprintf(time,"%04.0f", (double)Clock_getTicks() / 100000.0);
 
+
 }
 
 int main(void) {
@@ -446,7 +443,6 @@ int main(void) {
     if (buzzer == NULL){
     	System_abort("Buzzer pin open failed!");
     }
-    //buzzerOpen(buzzer);
 
     // OPEN TOP BUTTON PIN
     topButton = PIN_open(&topButtonState, topButtonPress);
@@ -510,7 +506,6 @@ int main(void) {
     if (PIN_registerIntCb(hButtons, &powerFxn) != 0) {
 	   System_abort("Error registering power button callback");
     }
-
 
     // RTOS' clock variables
     Clock_Handle clkHandle;
