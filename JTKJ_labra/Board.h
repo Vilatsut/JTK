@@ -37,10 +37,6 @@
 extern "C" {
 #endif
 
-// JTKJ: Esittele vakio kun käytät näyttöä
-//       Kommentoi vakio ulos kun käytät UART:ia
-//       Enable this constant to use Display
-//       Disable to use UART
 #define BOARD_DISPLAY_EXCLUDE_UART
 
 #include <ti/drivers/Power.h>

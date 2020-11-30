@@ -72,17 +72,13 @@ double opt3001_get_data(I2C_Handle *i2c) {
 
 	if (opt3001_get_status(i2c) & OPT3001_DATA_READY) {
 
-		// JTKJ: Teht�v� 2. Kommentit pois ja t�ytet��n i2c-viestirakenne luentomateriaalin avulla..
-		// JTKJ: Exercise 2. Uncomment and fill in the data structure below with correct values..
-
-		// Viestipuskurit, esittele oikea koko (korvaa nn)
 		uint8_t txBuffer[1];
 		uint8_t rxBuffer[2];
-		// Laitteen i2c-osoite
+
 		i2cTransaction.slaveAddress = Board_OPT3001_ADDR;
-		// Laitteen rekisterin osoite
+
 		txBuffer[0] = OPT3001_REG_RESULT;
-		// korvaa nn
+
 		i2cTransaction.writeBuf = txBuffer;
 		i2cTransaction.writeCount = 1;
 		i2cTransaction.readBuf = rxBuffer;
@@ -91,14 +87,6 @@ double opt3001_get_data(I2C_Handle *i2c) {
 
 		if (I2C_transfer(*i2c, &i2cTransaction)) {
 
-			// JTKJ: 1. Muunna mittausarvo 16-bit kokonaisluvuksi viestipuskurista
-			//          (rxBuffer)
-			//          Convert the register values (in rxBuffer) into 16 bit integer
-			//double lux;
-			//double exponent = 0b1111000000000000;
-			//uint16_t fracresult = 0b0000111111111111;
-
-			//int lux = 0.01* pow(2, (txBuffer & exponent) >> 12) * (txBuffer & fracresult);
 
 		    uint16_t maski = 0b1111000000000000;
 		    uint16_t recieved = (rxBuffer[0] << 8) | rxBuffer[1];
@@ -109,11 +97,7 @@ double opt3001_get_data(I2C_Handle *i2c) {
 			sprintf(merkkijono,"%f\n",lux);
 	        System_printf(merkkijono);
 	        System_flush();
-			// JTKJ: 2. Laske mittausarvo luxeina luentomateriaalin (datakirjan)
-			//          harjoitusteht�v�si kaavalla
-			//          By using the equation in datasheet or your exercise
-			//          find the value in lux
-            // lux = ...
+
 			return lux;
 		} else {
 

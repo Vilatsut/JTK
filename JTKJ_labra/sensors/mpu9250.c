@@ -2,9 +2,8 @@
  * mpu9250.c
  *
  *  Created on: 8.10.2016
- *  Author: Teemu Leppï¿½nen / UBIComp / University of Oulu
+ *  Author: Teemu Leppï¿½nen / UBIComp / University of Oulu (Edits in certain functions by Juho Bruun and Ville Hokkinen)
  *  Adopted for SensorTag from https://github.com/kriswiner/MPU-9250 by Kris Winer
- *
  * 	Datasheet: https://store.invensense.com/datasheets/invensense/MPU9250REV1.0.pdf
  */
 
@@ -499,41 +498,17 @@ void mpu9250_get_data(I2C_Handle *i2c, float *ax, float *ay, float *az, float *g
 	int16_t data[7]; // Raw data values
 	char strawData[40];
 	int loop;
-   	// JTKJ: 1. Luetaan rekisteriarvot talteen taulukkoon (rawData)
-   	// JTKJ: 1. Read register values into array rawData
+
 	readByte( ACCEL_XOUT_H, 14, rawData);
+
 	for(loop = 0; loop < 8; loop++){
 		data[loop] = (((uint16_t) rawData[loop * 2]) << 8) | (rawData[loop * 2 + 1]);
-		/*
-		sprintf(strawData,"%i kikkelin pituusarvo: %i\n", loop, data[loop]);
-		System_printf(strawData);
-		System_flush();
-		*/
 	}
 
-	// JTKJ: 2. Muunnetaan 8-bittiset rekisterinarvot 16-bittisiksi. Tässä siis 12
-	//          8-bittistä rekisteriarvoa (kiihtyvyyden x,y,z ja gyron x,y,z joista
-	//          kaikista sekä MSB että LSB. Taulukossa 16-bttinen data[0] koostuu
-	//          siis rekisterien ACCEL_XOUT_H (=MSB) ja ACCEL_XOUT_L (=LSB)
-	//          yhdistetyistä arvoista. data[1] on sitten vastaavat y-akselin arvot, jne
-
-
-	// JTKJ: 2. Convert 8-bit register values (rawData[14]) into corresponding 16-bit
-	//          values (data[7]), by bit operations. Here the value for data[0] comes
-	//          from ACCEL_XOUT_H (=MSB) ja ACCEL_XOUT_L (=LSB)
-
-
-
-	// JTKJ: 3. Muunnetaan 16-bittiset rekisterinarvot g-arvoiksi.
-	// JTKJ: 3. Convert 16-bit register values into g values
 	*ax = (float)data[0]*aRes - accelBias[0];
 	*ay = (float)data[1]*aRes - accelBias[1];
 	*az = (float)data[2]*aRes - accelBias[2];
 
-	// JTKJ: 4. Muunnetaan g-arvot kulmanopeudeksi. Tämän muunnoksen voi tehdä
-	//          halutesaan, kumpikin tapa datan esitykselle käy
-	// JTKJ: 4. Convert g values into degrees per second (this is optional,
-	//          you can work with g values also
 	*gx = (float)data[4]*gRes;
 	*gy = (float)data[5]*gRes;
 	*gz = (float)data[6]*gRes;

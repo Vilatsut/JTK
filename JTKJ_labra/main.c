@@ -145,7 +145,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 	char msgBuffer[16];
 
     // MPU 9250 PARAMETERS
-	I2C_Handle i2cMPU; // MPU9250 sensor interface
+	I2C_Handle i2cMPU;
 	I2C_Params i2cMPUParams;
     I2C_Params_init(&i2cMPUParams);
     i2cMPUParams.bitRate = I2C_400kHz;
@@ -193,6 +193,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
 
 			memset(msgBuffer,0,16);
 
+			//STATES CHANGE DEPENDING ON THE DATA READ FROM MPU
 			if(gx > 60) {
 				myState = UP;
 				sprintf(msgBuffer, "event:UP");
@@ -239,6 +240,7 @@ Void sensorFxn(UArg arg0, UArg arg1) {
     PIN_setOutputValue(hMpuPin,Board_MPU_POWER, Board_MPU_POWER_OFF);
 }
 
+// TASK FOR IN-GAME MUSIC
 Void musicalTask(UArg arg0, UArg arg1) {
 	while(1) {
 		if (myState != START) {
@@ -322,6 +324,7 @@ Void displayTask(UArg arg0, UArg arg1) {
 
 		if (pContext){
 			  while (1){
+				  // DISPLAY REACTS TO STATE CHANGES
 				  if (myState == START) {
 					  GrImageDraw(pContext, &otitImage, 0, 10);
 					  GrFlush(pContext);

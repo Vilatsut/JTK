@@ -1,3 +1,9 @@
+/*
+ * Author: Ville Hokkinen & Juho Bruun
+ * created on: 19 Oct 2020
+ * c file that includes bitmap graphics used in the project
+*/
+
 #include <ti/mw/grlib/grlib.h>
 #include <stdint.h>
 

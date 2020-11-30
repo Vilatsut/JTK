@@ -149,41 +149,10 @@ void bmp280_get_data(I2C_Handle *i2c, double *pres, double *temp) {
 	uint32_t raw_p = 0;
 	I2C_Transaction i2cTransaction;
 
-	// JTKJ: Kommentit pois ja täytetään i2c-viestirakenne luentomateriaalin avulla..
-	// JTKJ: Uncomment and fill in the data structure below with correct values..
-	/*
-	// Viestipuskurit, esittele oikea koko (korvaa nn)
-	uint8_t txBuffer[ nn ];
-    uint8_t rxBuffer[ nn ];
-	// Laitteen i2c-osoite
-    i2cTransaction.slaveAddress = nn;
-	// Laitteen rekisterin osoite
-    txBuffer[0] = nn;
-	// korvaa nn
-    i2cTransaction.writeBuf = nn;
-    i2cTransaction.writeCount = nn;
-    i2cTransaction.readBuf = nn;
-    i2cTransaction.readCount = nn;
-    */
 
     if (I2C_transfer(*i2c, &i2cTransaction)) {
 
 		uint32_t pressure=0, temperature=0;
-    	// JTKJ: 1. Muunna mittausarvot 20-bittisiksi kokonaisluvuiksi viestipuskurista
-		//          (rxBuffer). Käytä tässä harjoitustehtäväkoodiasi ja apumuuttujia
-		//          pressure ja temperature.
-    	// JTKJ: 1. Convert the register values (in rxBuffer) into 20 bit integer
-		//          Reuse your code from the C exercises..
-		// pressure = ..;
-		// temperature = ..;
-
-    	// JTKJ: 2. Muunna raakadata-arvot lämpötila- ja ilmanpainearvoiksi käyttäen
-		//          apumuuttujia. Tarvitset funktioita bmp280_temp_compensation ja
-		//          bmp280_convert_pres
-
-		// JTKJ: 3. Sijoita muunnetut lämpötila - ja ilmanpainearvot funktion
-		//          osoitinparametreihin, jotta saat palautettua mittausarvot
-
     } else {
 
         System_printf("BMP280: Data read failed!\n");

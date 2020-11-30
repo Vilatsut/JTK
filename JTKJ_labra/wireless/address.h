@@ -12,7 +12,4 @@
 #define IEEE80154_PANID				0x1337
 #define IEEE80154_CHANNEL			0x0C
 #define IEEE80154_SERVER_ADDR		0x1234
-
-// JTKJ: Alusta laitteen nettiosoite (boksin numero) vakioon
-// JTKJ: Give the device a network address (the number in your box)
 #define IEEE80154_MY_ADDR			0x0170
